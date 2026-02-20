@@ -1,11 +1,11 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+export const prerender = true;
 
 export async function getStaticPaths() {
   return [
     { params: { slug: "pad-thai" } },
     { params: { slug: "krapao" } },
-    { params: { slug: "fried-rice" } }
+    { params: { slug: "fried-rice" } },
   ];
 }
 
@@ -14,19 +14,31 @@ const { slug } = Astro.params;
 const menuData = {
   "pad-thai": { name: "ผัดไทย", price: 60 },
   "krapao": { name: "กะเพรา", price: 55 },
-  "fried-rice": { name: "ข้าวผัด", price: 50 }
+  "fried-rice": { name: "ข้าวผัด", price: 50 },
 };
 
 const item = menuData[slug];
 ---
 
-<Layout>
-  {item ? (
-    <div style="padding:40px">
-      <h1>{item.name}</h1>
-      <p>ราคา {item.price} บาท</p>
-    </div>
-  ) : (
-    <h1>ไม่พบเมนู</h1>
-  )}
-</Layout>
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{item ? item.name : "ไม่พบเมนู"} | ร้านน้องบี</title>
+  </head>
+  <body style="font-family: system-ui; padding: 40px">
+    {item ? (
+      <>
+        <h1>{item.name}</h1>
+        <p>ราคา {item.price} บาท</p>
+        <p><a href="/menu">← กลับหน้าเมนู</a></p>
+      </>
+    ) : (
+      <>
+        <h1>ไม่พบเมนู</h1>
+        <p><a href="/menu">← กลับหน้าเมนู</a></p>
+      </>
+    )}
+  </body>
+</html>
