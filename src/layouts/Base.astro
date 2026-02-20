@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 const { title="ร้านน้องบี", description="สั่งวันนี้ ส่งพรุ่งนี้ | เมืองแม่ฮ่องสอน" } = Astro.props;
+import CartBadge from "../components/CartBadge.astro";
 ---
 <!doctype html>
 <html lang="th">
@@ -18,6 +19,13 @@ const { title="ร้านน้องบี", description="สั่งวั�
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-brand-100">
       <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
         <a href="/" class="font-bold text-lg text-brand-800">ร้านน้องบี</a>
+<nav style="display:flex; gap:20px;">
+  <a href="/">หน้าแรก</a>
+  <a href="/menu">เมนู</a>
+  <a href="/cart">
+    🛒 ตะกร้า (<CartBadge />)
+  </a>
+</nav>
         <nav class="ml-auto flex items-center gap-4 text-sm text-slate-700">
           <a href="/menu" class="hover:text-brand-800">เมนูอาหาร</a>
           <a href="/promotions" class="hover:text-brand-800">คูปอง</a>
@@ -33,6 +41,8 @@ const { title="ร้านน้องบี", description="สั่งวั�
     <main class="max-w-5xl mx-auto px-4 py-6">
       <slot />
     </main>
+
+
 
     <footer class="border-t border-brand-100 bg-white">
       <div class="max-w-5xl mx-auto px-4 py-6 text-sm text-slate-600">
