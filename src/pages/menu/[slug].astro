@@ -1,62 +1,29 @@
 ---
-export const prerender = true;
+import Base from "../../layouts/Base.astro";
 import AddToCartButton from "../../components/AddToCartButton.astro";
-
-export async function getStaticPaths() {
-  return [
-    { params: { slug: "pad-thai" } },
-    { params: { slug: "krapao" } },
-    { params: { slug: "fried-rice" } },
-  ];
-}
 
 const { slug } = Astro.params;
 
-const menuData = {
-  "pad-thai": { name: "ผัดไทย", price: 60 },
-  "krapao": { name: "กะเพรา", price: 55 },
-  "fried-rice": { name: "ข้าวผัด", price: 50 },
-};
+// สมมติคุณมี items แบบนี้
+const items = [
+  { slug: "pad-thai", name: "ผัดไทย", price: 60 },
+  { slug: "krapao", name: "กะเพรา", price: 55 },
+];
 
-const item = menuData[slug];
-
+const item = items.find((x) => x.slug === slug);
+if (!item) return Astro.redirect("/menu");
 ---
 
+<Base>
+  <h1>{item.name}</h1>
+  <p>ราคา {item.price} บาท</p>
 
-<AddToCartButton
-  slug={item.slug}
-  name={item.name}
-  price={item.price}
-/>
+  <AddToCartButton
+    id={item.slug}
+    name={item.name}
+    price={item.price}
+    className="btn"
+  />
 
-<h1>{item.name}</h1>
-<p>ราคา {item.price} บาท</p>
-
-<AddToCartButton
-  slug={item.slug}
-  name={item.name}
-  price={item.price}
-  className="btn"
-/>
-<!doctype html>
-<html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{item ? item.name : "ไม่พบเมนู"} | ร้านน้องบี</title>
-  </head>
-  <body style="font-family: system-ui; padding: 40px">
-    {item ? (
-      <>
-        <h1>{item.name}</h1>
-        <p>ราคา {item.price} บาท</p>
-        <p><a href="/menu">← กลับหน้าเมนู</a></p>
-      </>
-    ) : (
-      <>
-        <h1>ไม่พบเมนู</h1>
-        <p><a href="/menu">← กลับหน้าเมนู</a></p>
-      </>
-    )}
-  </body>
-</html>
+  <p><a href="/menu">← กลับหน้าเมนู</a></p>
+</Base>
