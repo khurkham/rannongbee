@@ -1,5 +1,6 @@
 ---
 export const prerender = true;
+import AddToCartButton from "../../components/AddToCartButton.astro";
 
 export async function getStaticPaths() {
   return [
@@ -20,6 +21,16 @@ const menuData = {
 const item = menuData[slug];
 ---
 
+
+<h1>{item.name}</h1>
+<p>ราคา {item.price} บาท</p>
+
+<AddToCartButton
+  slug={item.slug}
+  name={item.name}
+  price={item.price}
+  className="btn"
+/>
 <!doctype html>
 <html lang="th">
   <head>
