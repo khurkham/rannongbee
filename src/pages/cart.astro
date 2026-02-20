@@ -1,83 +1,99 @@
 ---
-import { cartTotal } from "../lib/cart";
+import Base from "../layouts/Base.astro";
 ---
 
-<h1>ตะกร้าของฉัน</h1>
+<Base>
+  <h1>ตะกร้าของฉัน</h1>
 
-<div id="cart"></div>
+  <div id="cart-root">กำลังโหลด...</div>
 
-<hr />
-<p id="total"></p>
+  <p style="margin-top:1rem;">
+    <a href="/menu">← เลือกเมนูเพิ่ม</a>
+    &nbsp;|&nbsp;
+    <a href="/checkout">ไปหน้าชำระเงิน →</a>
+  </p>
 
-<button id="clear" type="button">ล้างตะกร้า</button>
+  <script type="module">
+    import { readCart, updateQty, removeItem, clearCart, cartTotal } from "../lib/cart";
 
-<script>
-  import { getCart, cartTotal, updateQty, removeItem, clearCart } from "../lib/cart";
+    const root = document.getElementById("cart-root");
 
-  const root = document.getElementById("cart");
-  const totalEl = document.getElementById("total");
-  const clearBtn = document.getElementById("clear");
+    function money(n){ return new Intl.NumberFormat("th-TH").format(n); }
 
-  function render() {
-    const items = getCart();
+    function render(){
+      const cart = readCart();
+      if (!root) return;
 
-    if (!items.length) {
-      root.innerHTML = "<p>ตะกร้ายังว่างอยู่</p>";
-      totalEl.textContent = "";
-      return;
-    }
+      if (cart.length === 0){
+        root.innerHTML = `<p>ตะกร้าว่าง</p>`;
+        return;
+      }
 
-    root.innerHTML = items.map((x) => `
-      <div style="display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
-        <div style="flex:1;">
-          <div><b>${x.name}</b></div>
-          <div>${x.price} บาท</div>
+      const rows = cart.map((x) => `
+        <tr>
+          <td>${x.name}</td>
+          <td style="text-align:right;">${money(x.price)}</td>
+          <td style="text-align:center;">
+            <button data-dec="${x.id}">−</button>
+            <span style="display:inline-block;min-width:2rem;text-align:center;">${x.qty}</span>
+            <button data-inc="${x.id}">+</button>
+          </td>
+          <td style="text-align:right;">${money(x.price * x.qty)}</td>
+          <td style="text-align:center;">
+            <button data-rm="${x.id}">ลบ</button>
+          </td>
+        </tr>
+      `).join("");
+
+      root.innerHTML = `
+        <table style="width:100%; border-collapse:collapse; gap:.5rem;">
+          <thead>
+            <tr>
+              <th style="text-align:left;">รายการ</th>
+              <th style="text-align:right;">ราคา</th>
+              <th style="text-align:center;">จำนวน</th>
+              <th style="text-align:right;">รวม</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+
+        <div style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center;">
+          <button id="clear-cart">ล้างตะกร้า</button>
+          <strong>ยอดรวม: ${money(cartTotal())} บาท</strong>
         </div>
+      `;
 
-        <div style="display:flex; gap:6px; align-items:center;">
-          <button data-dec="${x.slug}">-</button>
-          <span>${x.qty}</span>
-          <button data-inc="${x.slug}">+</button>
-        </div>
+      // bind events
+      root.querySelectorAll("button[data-inc]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const id = b.getAttribute("data-inc");
+          const item = cart.find((x) => x.id === id);
+          if (item) updateQty(item.id, item.qty + 1);
+        });
+      });
 
-        <div style="width:100px; text-align:right;">
-          <b>${x.price * x.qty}</b>
-        </div>
+      root.querySelectorAll("button[data-dec]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const id = b.getAttribute("data-dec");
+          const item = cart.find((x) => x.id === id);
+          if (item) updateQty(item.id, item.qty - 1);
+        });
+      });
 
-        <button data-rm="${x.slug}">ลบ</button>
-      </div>
-    `).join("");
+      root.querySelectorAll("button[data-rm]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const id = b.getAttribute("data-rm");
+          if (id) removeItem(id);
+        });
+      });
 
-    totalEl.textContent = `รวมทั้งหมด: ${cartTotal(items)} บาท`;
-  }
-
-  document.addEventListener("click", (e) => {
-    const inc = e.target.closest("[data-inc]");
-    const dec = e.target.closest("[data-dec]");
-    const rm  = e.target.closest("[data-rm]");
-
-    const items = getCart();
-
-    if (inc) {
-      const slug = inc.getAttribute("data-inc");
-      const item = items.find((x) => x.slug === slug);
-      if (item) updateQty(slug, item.qty + 1);
+      const clearBtn = document.getElementById("clear-cart");
+      clearBtn?.addEventListener("click", () => clearCart());
     }
 
-    if (dec) {
-      const slug = dec.getAttribute("data-dec");
-      const item = items.find((x) => x.slug === slug);
-      if (item) updateQty(slug, item.qty - 1);
-    }
-
-    if (rm) {
-      const slug = rm.getAttribute("data-rm");
-      removeItem(slug);
-    }
-  });
-
-  clearBtn.addEventListener("click", () => clearCart());
-
-  render();
-  window.addEventListener("cart:updated", render);
-</script>
+    render();
+    window.addEventListener("cart:changed", render);
+  </script>
+</Base>
