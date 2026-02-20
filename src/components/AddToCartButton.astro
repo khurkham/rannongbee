@@ -1,47 +1,30 @@
 ---
-// src/components/AddToCartButton.astro
-const { slug, name, price, className = "" } = Astro.props;
-import AddToCartButton from "../components/AddToCartButton.astro";
-
+const { id, name, price, className = "" } = Astro.props;
 ---
 
 <button
   class={className}
-  type="button"
-  data-add-to-cart
-  data-slug={slug}
+  data-id={id}
   data-name={name}
   data-price={price}
 >
   เพิ่มลงตะกร้า
 </button>
 
-
-// ในแต่ละรายการ:
-<AddToCartButton
-  slug={item.slug}
-  name={item.name}
-  price={item.price}
-  className="btn"
-/>
-
-<script>
+<script type="module">
   import { addToCart } from "../lib/cart";
 
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-add-to-cart]");
-    if (!btn) return;
+  const btn = document.currentScript?.previousElementSibling;
+  if (btn && btn instanceof HTMLButtonElement) {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id || "";
+      const name = btn.dataset.name || "";
+      const price = Number(btn.dataset.price || 0);
+      addToCart({ id, name, price }, 1);
 
-    const slug = btn.getAttribute("data-slug");
-    const name = btn.getAttribute("data-name");
-    const price = Number(btn.getAttribute("data-price"));
-
-    if (!slug || !name || Number.isNaN(price)) return;
-
-    addToCart({ slug, name, price }, 1);
-
-    // ฟีดแบคเล็กน้อย
-    btn.textContent = "เพิ่มแล้ว ✓";
-    setTimeout(() => (btn.textContent = "เพิ่มลงตะกร้า"), 800);
-  });
+      // แจ้งเตือนเบา ๆ
+      btn.textContent = "เพิ่มแล้ว ✓";
+      setTimeout(() => (btn.textContent = "เพิ่มลงตะกร้า"), 900);
+    });
+  }
 </script>
