@@ -1,6 +1,8 @@
 ---
 // src/components/AddToCartButton.astro
 const { slug, name, price, className = "" } = Astro.props;
+import AddToCartButton from "../components/AddToCartButton.astro";
+
 ---
 
 <button
@@ -13,6 +15,15 @@ const { slug, name, price, className = "" } = Astro.props;
 >
   เพิ่มลงตะกร้า
 </button>
+
+
+// ในแต่ละรายการ:
+<AddToCartButton
+  slug={item.slug}
+  name={item.name}
+  price={item.price}
+  className="btn"
+/>
 
 <script>
   import { addToCart } from "../lib/cart";
