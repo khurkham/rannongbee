@@ -1,0 +1,36 @@
+---
+// src/components/AddToCartButton.astro
+const { slug, name, price, className = "" } = Astro.props;
+---
+
+<button
+  class={className}
+  type="button"
+  data-add-to-cart
+  data-slug={slug}
+  data-name={name}
+  data-price={price}
+>
+  เพิ่มลงตะกร้า
+</button>
+
+<script>
+  import { addToCart } from "../lib/cart";
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-add-to-cart]");
+    if (!btn) return;
+
+    const slug = btn.getAttribute("data-slug");
+    const name = btn.getAttribute("data-name");
+    const price = Number(btn.getAttribute("data-price"));
+
+    if (!slug || !name || Number.isNaN(price)) return;
+
+    addToCart({ slug, name, price }, 1);
+
+    // ฟีดแบคเล็กน้อย
+    btn.textContent = "เพิ่มแล้ว ✓";
+    setTimeout(() => (btn.textContent = "เพิ่มลงตะกร้า"), 800);
+  });
+</script>
