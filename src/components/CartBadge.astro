@@ -1,0 +1,20 @@
+---
+// src/components/CartBadge.astro
+const { className = "" } = Astro.props;
+---
+
+<span class={className} id="cart-count">0</span>
+
+<script>
+  import { cartCount, getCart } from "../lib/cart";
+
+  const el = document.getElementById("cart-count");
+
+  function render() {
+    el.textContent = String(cartCount(getCart()));
+  }
+
+  render();
+  window.addEventListener("cart:updated", render);
+  window.addEventListener("storage", render);
+</script>
