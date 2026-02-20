@@ -1,14 +1,17 @@
-<span id="cart-count">0</span>
+<a href="/cart" style="display:inline-flex;gap:.5rem;align-items:center;">
+  <span>ตะกร้า</span>
+  <span id="cart-badge" style="background:#1f5; padding:.1rem .5rem; border-radius:999px;">0</span>
+</a>
 
-<script>
-  import { cartCount, getCart } from "../lib/cart";
+<script type="module">
+  import { cartCount } from "../lib/cart";
 
-  const el = document.getElementById("cart-count");
-
-  function render() {
-    el.textContent = cartCount(getCart());
-  }
+  const badge = document.getElementById("cart-badge");
+  const render = () => {
+    if (!badge) return;
+    badge.textContent = String(cartCount());
+  };
 
   render();
-  window.addEventListener("cart:updated", render);
+  window.addEventListener("cart:changed", render);
 </script>
