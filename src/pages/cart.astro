@@ -1,1 +1,83 @@
-<!-- generated in next step -->
+---
+import { cartTotal } from "../lib/cart";
+---
+
+<h1>ตะกร้าของฉัน</h1>
+
+<div id="cart"></div>
+
+<hr />
+<p id="total"></p>
+
+<button id="clear" type="button">ล้างตะกร้า</button>
+
+<script>
+  import { getCart, cartTotal, updateQty, removeItem, clearCart } from "../lib/cart";
+
+  const root = document.getElementById("cart");
+  const totalEl = document.getElementById("total");
+  const clearBtn = document.getElementById("clear");
+
+  function render() {
+    const items = getCart();
+
+    if (!items.length) {
+      root.innerHTML = "<p>ตะกร้ายังว่างอยู่</p>";
+      totalEl.textContent = "";
+      return;
+    }
+
+    root.innerHTML = items.map((x) => `
+      <div style="display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
+        <div style="flex:1;">
+          <div><b>${x.name}</b></div>
+          <div>${x.price} บาท</div>
+        </div>
+
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button data-dec="${x.slug}">-</button>
+          <span>${x.qty}</span>
+          <button data-inc="${x.slug}">+</button>
+        </div>
+
+        <div style="width:100px; text-align:right;">
+          <b>${x.price * x.qty}</b>
+        </div>
+
+        <button data-rm="${x.slug}">ลบ</button>
+      </div>
+    `).join("");
+
+    totalEl.textContent = `รวมทั้งหมด: ${cartTotal(items)} บาท`;
+  }
+
+  document.addEventListener("click", (e) => {
+    const inc = e.target.closest("[data-inc]");
+    const dec = e.target.closest("[data-dec]");
+    const rm  = e.target.closest("[data-rm]");
+
+    const items = getCart();
+
+    if (inc) {
+      const slug = inc.getAttribute("data-inc");
+      const item = items.find((x) => x.slug === slug);
+      if (item) updateQty(slug, item.qty + 1);
+    }
+
+    if (dec) {
+      const slug = dec.getAttribute("data-dec");
+      const item = items.find((x) => x.slug === slug);
+      if (item) updateQty(slug, item.qty - 1);
+    }
+
+    if (rm) {
+      const slug = rm.getAttribute("data-rm");
+      removeItem(slug);
+    }
+  });
+
+  clearBtn.addEventListener("click", () => clearCart());
+
+  render();
+  window.addEventListener("cart:updated", render);
+</script>
