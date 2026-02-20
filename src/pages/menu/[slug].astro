@@ -19,8 +19,15 @@ const menuData = {
 };
 
 const item = menuData[slug];
+
 ---
 
+
+<AddToCartButton
+  slug={item.slug}
+  name={item.name}
+  price={item.price}
+/>
 
 <h1>{item.name}</h1>
 <p>ราคา {item.price} บาท</p>
