@@ -19,13 +19,9 @@ import CartBadge from "../components/CartBadge.astro";
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-brand-100">
       <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
         <a href="/" class="font-bold text-lg text-brand-800">ร้านน้องบี</a>
-<nav style="display:flex; gap:20px;">
-  <a href="/">หน้าแรก</a>
-  <a href="/menu">เมนู</a>
-  <a href="/cart">
-    🛒 ตะกร้า (<CartBadge />)
-  </a>
-</nav>
+
+
+
         <nav class="ml-auto flex items-center gap-4 text-sm text-slate-700">
           <a href="/menu" class="hover:text-brand-800">เมนูอาหาร</a>
           <a href="/promotions" class="hover:text-brand-800">คูปอง</a>
@@ -34,6 +30,18 @@ import CartBadge from "../components/CartBadge.astro";
             <span>ตะกร้า</span>
             <span id="cartCount" class="min-w-[1.5rem] text-center bg-white/20 rounded-full px-2">0</span>
           </a>
+
+        <a href="/menu">เมนูอาหาร</a>
+        <a href="/how-it-works">วิธีสั่ง</a>
+        <CartBadge />
+    
+
+  <a href="/">หน้าแรก</a>
+  <a href="/menu">เมนู</a>
+  <a href="/cart">
+    🛒 ตะกร้า (<CartBadge />)
+  </a>
+
         </nav>
       </div>
     </header>
