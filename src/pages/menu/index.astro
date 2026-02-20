@@ -1,0 +1,71 @@
+---
+import Base from "../../layouts/Base.astro";
+import { listProducts } from "../../lib/db";
+
+const DB = (Astro.locals.runtime.env as any).DB as D1Database;
+const products = await listProducts(DB);
+---
+<Base title="เมนูอาหาร | ร้านน้องบี" description="เมนูอาหารร้านน้องบี เมืองแม่ฮ่องสอน • สั่งวันนี้ ส่งพรุ่งนี้">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-brand-900">เมนูอาหาร</h1>
+      <p class="text-slate-600 text-sm mt-1">เมนูหลัก ~20 รายการ • ปิดรับออเดอร์ 20:00</p>
+    </div>
+    <input id="q" placeholder="ค้นหาเมนู..." class="w-56 px-3 py-2 rounded-xl border border-brand-200 bg-white" />
+  </div>
+
+  <div id="grid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {products.map((p) => (
+      <div class="rounded-2xl bg-white border border-brand-100 p-4 hover:shadow-sm">
+        <a href={`/menu/${p.slug}`}>
+          <div class="h-36 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-700 overflow-hidden">
+            {p.image_url ? <img src={p.image_url} alt={p.name_th} class="h-full w-full object-cover rounded-xl" loading="lazy" /> : "รูปอาหาร"}
+          </div>
+          <div class="mt-3 font-semibold">{p.name_th}</div>
+          <div class="text-sm text-slate-600">{new Intl.NumberFormat('th-TH').format(p.price_thb)} บาท</div>
+        </a>
+        <button class="mt-3 w-full px-4 py-2 rounded-xl bg-brand-700 text-white font-semibold hover:bg-brand-800"
+          data-add data-id={p.id} data-name={p.name_th} data-price={p.price_thb}>เพิ่มลงตะกร้า</button>
+      </div>
+    ))}
+  </div>
+
+  <script>
+    const input = document.getElementById('q');
+    const cards = Array.from(document.querySelectorAll('#grid > div'));
+    input?.addEventListener('input', () => {
+      const q = (input.value || '').toLowerCase();
+      for (const c of cards) {
+        const name = c.querySelector('.font-semibold')?.textContent?.toLowerCase() || '';
+        c.style.display = name.includes(q) ? '' : 'none';
+      }
+    });
+
+    function readCart(){ try { return JSON.parse(localStorage.getItem('cart_items')||'[]'); } catch { return []; } }
+    function writeCart(items){ localStorage.setItem('cart_items', JSON.stringify(items)); }
+    function bumpCount(){
+      try {
+        const cart = readCart();
+        const count = cart.reduce((s,it)=>s+Number(it.qty||0),0);
+        const el = document.getElementById('cartCount');
+        if (el) el.textContent = String(count);
+      } catch {}
+    }
+
+    document.querySelectorAll('button[data-add]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const price = Number(btn.getAttribute('data-price')||'0');
+        const cart = readCart();
+        const found = cart.find(x => x.product_id === id && (x.note||'')==='');
+        if (found) found.qty += 1;
+        else cart.push({ product_id:id, name_th:name, unit_price_thb:price, qty:1, note:'' });
+        writeCart(cart);
+        bumpCount();
+        btn.textContent = 'เพิ่มแล้ว ✓';
+        setTimeout(()=>btn.textContent='เพิ่มลงตะกร้า', 900);
+      });
+    });
+  </script>
+</Base>

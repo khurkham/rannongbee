@@ -1,0 +1,30 @@
+name = "nongbee-online-order"
+compatibility_date = "2026-02-20"
+
+[vars]
+STORE_NAME_TH = "ร้านน้องบี"
+STORE_CITY = "อำเภอเมืองแม่ฮ่องสอน"
+STORE_PROVINCE = "แม่ฮ่องสอน"
+PROMPTPAY_PHONE = "0824809200"
+CUTOFF_HOUR = "20"
+
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "change-me-strong-password"
+
+DELIVERY_FREE_UP_TO_KM = "5"
+DELIVERY_TIER_1_MAX_KM = "10"
+DELIVERY_TIER_1_FEE = "30"
+DELIVERY_TIER_2_MAX_KM = "15"
+DELIVERY_TIER_2_FEE = "50"
+DELIVERY_TIER_3_MAX_KM = "20"
+DELIVERY_TIER_3_FEE = "70"
+
+STORE_LAT = "19.3010"
+STORE_LNG = "97.9685"
+
+LINE_OA_ID = "@000ywugq"  # เช่น @nongbee (ใส่ @ ด้วย)
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nongbee-db"
+database_id = "dcdffd2e-0d75-44ad-8e50-e279a77971cc"

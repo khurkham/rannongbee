@@ -1,0 +1,54 @@
+---
+import "../styles/global.css";
+const { title="ร้านน้องบี", description="สั่งวันนี้ ส่งพรุ่งนี้ | เมืองแม่ฮ่องสอน" } = Astro.props;
+---
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#3f8e78" />
+  </head>
+  <body class="bg-brand-50 text-slate-900">
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-brand-100">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+        <a href="/" class="font-bold text-lg text-brand-800">ร้านน้องบี</a>
+        <nav class="ml-auto flex items-center gap-4 text-sm text-slate-700">
+          <a href="/menu" class="hover:text-brand-800">เมนูอาหาร</a>
+          <a href="/promotions" class="hover:text-brand-800">คูปอง</a>
+          <a href="/how-it-works" class="hover:text-brand-800">วิธีสั่ง</a>
+          <a href="/cart" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-700 text-white hover:bg-brand-800">
+            <span>ตะกร้า</span>
+            <span id="cartCount" class="min-w-[1.5rem] text-center bg-white/20 rounded-full px-2">0</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6">
+      <slot />
+    </main>
+
+    <footer class="border-t border-brand-100 bg-white">
+      <div class="max-w-5xl mx-auto px-4 py-6 text-sm text-slate-600">
+        <div class="font-semibold text-brand-800">ร้านน้องบี — เมืองแม่ฮ่องสอน</div>
+        <div>ขายออนไลน์เท่านั้น • สั่งก่อน 20:00 ส่งพรุ่งนี้</div>
+        <div class="mt-2">© {new Date().getFullYear()} ร้านน้องบี</div>
+      </div>
+    </footer>
+
+    <script>
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart_items') || '[]');
+        const count = cart.reduce((s,it)=>s+Number(it.qty||0),0);
+        const el = document.getElementById('cartCount');
+        if (el) el.textContent = String(count);
+      } catch {}
+    </script>
+  </body>
+</html>

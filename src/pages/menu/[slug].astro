@@ -1,0 +1,66 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getProductBySlug } from "../../lib/db";
+
+const { slug } = Astro.params;
+const DB = (Astro.locals.runtime.env as any).DB as D1Database;
+const p = await getProductBySlug(DB, slug!);
+if (!p) return Astro.redirect('/menu');
+---
+<Base title={`${p.name_th} | ร้านน้องบี`} description={`สั่ง ${p.name_th} ออนไลน์ เมืองแม่ฮ่องสอน • สั่งวันนี้ ส่งพรุ่งนี้`}>
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="rounded-3xl bg-white border border-brand-100 p-4">
+      <div class="aspect-[4/3] rounded-2xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-700 overflow-hidden">
+        {p.image_url ? <img src={p.image_url} alt={p.name_th} class="h-full w-full object-cover" /> : "รูปอาหาร"}
+      </div>
+    </div>
+
+    <div class="rounded-3xl bg-white border border-brand-100 p-6">
+      <h1 class="text-2xl font-extrabold text-brand-900">{p.name_th}</h1>
+      <p class="text-slate-600 mt-1">{p.description}</p>
+      <div class="text-xl font-bold text-brand-900 mt-4">{new Intl.NumberFormat('th-TH').format(p.price_thb)} บาท</div>
+
+      <label class="block mt-5 text-sm font-semibold text-slate-700">หมายเหตุ (ไม่ใส่ก็ได้)</label>
+      <textarea id="note" class="mt-2 w-full min-h-[90px] px-3 py-2 rounded-xl border border-brand-200 bg-white" placeholder="เช่น ไม่เผ็ด / ไม่ใส่ผัก..."></textarea>
+
+      <div class="mt-5 flex gap-3">
+        <button id="add" class="flex-1 px-5 py-3 rounded-2xl bg-brand-700 text-white font-semibold hover:bg-brand-800">เพิ่มลงตะกร้า</button>
+        <a href="/cart" class="px-5 py-3 rounded-2xl bg-brand-100 text-brand-900 font-semibold hover:bg-brand-200">ไปที่ตะกร้า</a>
+      </div>
+
+      <div class="mt-4 text-xs text-slate-500">ปิดรับออเดอร์ 20:00 • สั่งวันนี้ ส่งพรุ่งนี้ • จ่ายก่อนเท่านั้น</div>
+    </div>
+  </div>
+
+  <script>
+    const PRODUCT = {
+      id: {JSON.stringify(p.id)},
+      name_th: {JSON.stringify(p.name_th)},
+      price_thb: {JSON.stringify(p.price_thb)}
+    };
+
+    function readCart(){ try { return JSON.parse(localStorage.getItem('cart_items')||'[]'); } catch { return []; } }
+    function writeCart(items){ localStorage.setItem('cart_items', JSON.stringify(items)); }
+    function bumpCount(){
+      try {
+        const cart = readCart();
+        const count = cart.reduce((s,it)=>s+Number(it.qty||0),0);
+        const el = document.getElementById('cartCount');
+        if (el) el.textContent = String(count);
+      } catch {}
+    }
+
+    const btn = document.getElementById('add');
+    btn?.addEventListener('click', () => {
+      const note = (document.getElementById('note')?.value || '').trim();
+      const cart = readCart();
+      const found = cart.find(x => x.product_id === PRODUCT.id && (x.note||'') === note);
+      if (found) found.qty += 1;
+      else cart.push({ product_id: PRODUCT.id, name_th: PRODUCT.name_th, unit_price_thb: PRODUCT.price_thb, qty: 1, note });
+      writeCart(cart);
+      bumpCount();
+      btn.textContent = 'เพิ่มแล้ว ✓';
+      setTimeout(()=>btn.textContent='เพิ่มลงตะกร้า', 900);
+    });
+  </script>
+</Base>
