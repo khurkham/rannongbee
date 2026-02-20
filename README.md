@@ -1,7 +1,13 @@
-placeholder
+# rannongbee (Astro) — Cart System (Working Minimal)
 
+## Run locally
+```bash
+npm install
+npm run dev
+```
 
-## ยืนยันสลิปผ่าน LINE (ไม่ต้องใช้ R2)
-- หลังลูกค้าสั่งสำเร็จ หน้า `/orders/<code>` จะมีปุ่ม **เปิด LINE เพื่อส่งสลิป**
-- ตั้งค่า `LINE_OA_ID` (ใส่ @ ด้วย เช่น `@nongbee`) ใน Cloudflare Variables/Secrets
-- ลูกค้าแนบรูปสลิปในแชท LINE และส่งให้ร้านได้ทันที
+## Deploy to Cloudflare Pages
+- Build command: `npm run build`
+- Build output directory: `dist`
+
+This project is fully static (no adapter required) and uses `localStorage` for the cart.

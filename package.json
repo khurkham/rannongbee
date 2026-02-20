@@ -1,27 +1,13 @@
 {
-  "name": "nongbee-online-order",
+  "name": "rannongbee",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "db:migrate:local": "wrangler d1 migrations apply nongbee-db --local",
-    "db:migrate": "wrangler d1 migrations apply nongbee-db",
-    "deploy": "wrangler pages deploy dist"
+    "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^4.16.0",
-    "@astrojs/cloudflare": "^11.0.0",
-    "@astrojs/tailwind": "^5.1.0",
-    "tailwindcss": "^3.4.10",
-    "qrcode": "^1.5.4",
-    "hono": "^4.5.10",
-    "zod": "^3.23.8",
-    "cookie": "^0.6.0"
-  },
-  "devDependencies": {
-    "wrangler": "^3.79.0",
-    "typescript": "^5.5.4"
+    "astro": "^4.16.0"
   }
 }

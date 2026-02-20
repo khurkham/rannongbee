@@ -1,9 +1,6 @@
 import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
-import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
-  output: 'server',
-  adapter: cloudflare(),
-  integrations: [tailwind()],
+  // Static output works great on Cloudflare Pages.
+  // Build output directory is "dist" by default.
 });

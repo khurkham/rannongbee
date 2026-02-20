@@ -1,12 +1,6 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "strict": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-    "types": [
-      "@cloudflare/workers-types"
-    ],
-    "skipLibCheck": true
+    "baseUrl": "."
   }
 }
